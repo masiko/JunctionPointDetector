@@ -191,11 +191,11 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 
 std::vector<int> JunctionPointDetector::JPD(IplImage* img, int w) {
 	int x,y,type;
-	double in[307200];
+	double* ls;
 
-	if (Ipl2Double(img, in))	return getDst();
-	ls = lsd(&n, in, img->width, img->height);
-	setImage(ls, img->width, img->height, n, w)
+	if (Ipl2Double(img, map))	return getDst();
+	ls = lsd(&n, map, img->width, img->height);
+	setImage(ls, img->width, img->height, n, w);
 
 	for (int i=0; i<n; i++) {
 		x = (int)*(ls + 7*i);

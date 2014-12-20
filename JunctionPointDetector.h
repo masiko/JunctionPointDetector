@@ -9,8 +9,7 @@
 class JunctionPointDetector {
 private:
 	double *input;
-	double *ls;
-	int map[307200];
+	double map[307200];
 	int width;
 	int height;
 	int tmpw;
