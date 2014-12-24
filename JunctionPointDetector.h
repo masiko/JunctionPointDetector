@@ -19,7 +19,7 @@ public:
 	JunctionPointDetector();
 	~JunctionPointDetector();
 	int Ipl2Double(IplImage* , double []);
-	int Double2Ipl(IplImage* , double :[]);
+	int Double2Ipl(IplImage* , double []);
 	int setImage(double* out, int X, int Y, int num, int w);
 	int setDst(int x, int y, int type);
 	std::vector<int> getDst();
