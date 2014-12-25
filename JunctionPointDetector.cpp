@@ -37,7 +37,7 @@ int JunctionPointDetector::Double2Ipl(IplImage *out, double in[]) {
 	return 0;
 }
 
-int JunctionPointDetector::setImage(double* in, int X, int Y, int n, int w) {
+int JunctionPointDetector::setImage(double* in, int X, int Y, int num, int w) {
 	int diff;
 	int px, py;
 	double ang;
@@ -47,12 +47,12 @@ int JunctionPointDetector::setImage(double* in, int X, int Y, int n, int w) {
 	input = in;
 	width = X;
 	height = Y;
-	tmpw = w;
-	for (int i=0; i<n; i++) {
-		x1 =  *(in+7*i);
-		y1 =  *(in+7*i+1);
-		x2 =  *(in+7*i+2);
-		y2 =  *(in+7*i+3);
+	wsize = w;
+	for (int i=0; i<num; i++) {
+		x1 =  *(input+7*i);
+		y1 =  *(input+7*i+1);
+		x2 =  *(input+7*i+2);
+		y2 =  *(input+7*i+3);
 		diff = sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
 		ang = atan((y2-y1)/(x2-x1));
 		*(in+7*i+4) = ang;
@@ -83,10 +83,10 @@ std::vector<int> JunctionPointDetector::getDst() {
 
 double* JunctionPointDetector::getLineSegment(int *num){
 	*num = n;
-	return ls;
+	return input;
 }
 
-int JunctionPointDetector::getDirection(int x, int y) {
+int JunctionPointDetector::process(int x, int y) {
 	int sx,sy,ex,ey;
 	int lines[20];
 	int pos;
@@ -95,10 +95,10 @@ int JunctionPointDetector::getDirection(int x, int y) {
 	double diff;
 	
 //	std::cout<<x<<","<<y<<"/";
-	sx = x-tmpw;
-	sy = y-tmpw;
-	ex = x+tmpw;
-	ey = y+tmpw;
+	sx = x-wsize;
+	sy = y-wsize;
+	ex = x+wsize;
+	ey = y+wsize;
 
 //	if (sx<0 || width-1<ex || sy<0 || height-1<ey)	return -1;
 	sx = std::max(0, std::min(width-1, sx));
@@ -190,21 +190,27 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 }
 
 std::vector<int> JunctionPointDetector::JPD(IplImage* img, int w) {
-	int x,y,type;
-	double* ls;
-
+	int x,y,type,num;
+	double *ls;
+	dst.clear();
+	
 	if (Ipl2Double(img, map))	return getDst();
-	ls = lsd(&n, map, img->width, img->height);
-	setImage(ls, img->width, img->height, n, w);
+	ls = lsd(&num, map, img->width, img->height);
+	
+	for (int i=0; i<307200; i++) {
+		map[i] = -1.0;
+	}
+	
+	setImage(ls, img->width, img->height, num, w);
 
-	for (int i=0; i<n; i++) {
-		x = (int)*(ls + 7*i);
-		y = (int)*(ls + 7*i+1);
-		type = getDirection(x,y);
+	for (int i=0; i<num; i++) {
+		x = (int)*(input + 7*i);
+		y = (int)*(input + 7*i+1);
+		type = process(x,y);
 		setDst(x,y,type);
-		x = (int)*(ls + 7*i+2);
-		y = (int)*(ls + 7*i+3);
-		type = getDirection(x,y);
+		x = (int)*(input + 7*i+2);
+		y = (int)*(input + 7*i+3);
+		type = process(x,y);
 		setDst(x,y,type);
 	}
 	return getDst();
