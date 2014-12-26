@@ -24,6 +24,7 @@ int DownScale::downscale(IplImage* out, unsigned char color) {
 	int col, row;
 	int x,y;
 	int flag=0;
+	int pos=0;
 	col = out->width;;
 	row = out->height;
 
@@ -37,13 +38,14 @@ int DownScale::downscale(IplImage* out, unsigned char color) {
 			for(int k=0; k<scale; k++) {
 				for (int l=0; l<scale; l++) {
 					if ( (unsigned char)img->imageData[x+y+l+k*img->width] > color) {
-						flag++;
+						flag=1;
+						pos =x+y+l+k*img->width;
 						break;
 					}
 				}
 				if (flag)	break;
 			}
-			out->imageData[j+i*col] = flag ? (unsigned char)img->imageData[x+y] : 0;
+			out->imageData[j+i*col] = flag ? (unsigned char)img->imageData[pos] : 0;
 		}
 	}
 	return 0;
