@@ -8,7 +8,7 @@ int main() {
 	const int scale = 4;
 	int n;
 	std::vector<int> v;
-	IplImage* img = cvLoadImage("image00005.png",0);
+	IplImage* img = cvLoadImage("image00005.png");
 	IplImage* img2 = cvCreateImage(cvSize(img->width/scale, img->height/scale), 8, 1);
 	IplImage* img3 = cvCreateImage(cvSize(img->width/scale, img->height/scale), 8, 1);
 	JunctionPointDetector jpd;

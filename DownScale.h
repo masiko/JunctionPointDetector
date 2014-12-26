@@ -11,4 +11,5 @@ public:
 	~DownScale();
 	int setImage(IplImage* in, int scale);
 	int downscale(IplImage* out, unsigned char color);
+	int downscale(IplImage* out, IplImage* map, unsigned short color);
 };
