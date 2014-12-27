@@ -26,6 +26,7 @@ public:
 	double* getLineSegment(int* num);
 	int process(int x, int y);
 	int detectJunction(int x,int y,int num, int list[]);
+	int mergeJunction();
 	std::vector<int> JPD(IplImage* img, int w);
 };
 

@@ -192,6 +192,29 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 	return count;
 }
 
+int JunctionPointDetector::mergeJunction(){
+	int num = dst.size()/3;
+	int pos0, pos1;
+	int x0,y0,x1,y1;
+
+	for (int i=0; i<num; i++) {
+		pos0 = 3*i;
+		x0 = dst[pos0] - wsize*2;
+		y0 = dst[pos0+1] - wsize*2;
+		x1 = dst[pos0] + wsize*2;
+		y1 = dst[pos0+1] + wsize*2;
+
+		for (int j=i+1; j<num; j++) {
+			pos1 = 3*j;
+			if (x0 < dst[pos1] && dst[pos1] < x1 && y0 < dst[pos1+1] && dst[pos1+1] < y1) {
+				if (dst[pos0+2] < dst[pos1+2])	dst[pos0+2] = dst[pos1+2];
+				else							dst[pos1+2] = dst[pos0+2];
+			}
+		}
+	}
+	return 0;
+}
+
 std::vector<int> JunctionPointDetector::JPD(IplImage* img, int w) {
 	int x,y,type,num;
 	double *ls;
@@ -216,5 +239,6 @@ std::vector<int> JunctionPointDetector::JPD(IplImage* img, int w) {
 		type = process(x,y);
 		setDst(x,y,type);
 	}
+	mergeJunction();
 	return getDst();
 }
