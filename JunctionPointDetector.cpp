@@ -131,9 +131,10 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 	double diffa, diff1, diff2;
 	double ang[20];
 	double dis[20];
+	int dst[20];
 	int count=0;
 	int flag=1;
-	
+
 	for (int i=0; i<num; i++) {
 		diff1=fabs(*(input + 7*list[i]) - x) + fabs(*(input + 7*list[i]+1) - y);
 		diff2=fabs(*(input + 7*list[i]+2) - x) + fabs(*(input + 7*list[i]+3) - y);
@@ -153,40 +154,42 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 			diffa = diffa - 2*3.1415*(int)(diffa/3.1415);
 			if (-0.5<diffa && diffa<0.5)	flag=0;
 		}
-		if (flag)	count++;
+		if (flag) {
+			dst[count++] = i;
+		}
 	}
 
-	if(count==2) {
+		if(count==2) {
+		//-PI < normalaize_diffa < +PI ==> straight line
+		diffa = *(input + 7*list[ dst[0] ]+4) - *(input + 7*list[ dst[1] ]+4);
+		if (diffa<-0.5 || 0.5<diffa)	flag=0;
+		if (flag)	return 0;
+
+/*		//All end point out of the window ==> straight line
+
+		for (int i=0; i<2; i++) {
+			std::cout<<"x,y,wsize:"<<x<<","<<y<<","<<wsize<<"\n";
+			std::cout<<"[x,y]"<<*(input + 7*list[ dst[i] ])<<","<<*(input + 7*list[ dst[i] ]+1)<<"\n";
+			std::cout<<"[x,y]"<<*(input + 7*list[ dst[i] ]+2)<<","<<*(input + 7*list[ dst[i] ]+3)<<"\n";
+		}
 		flag=1;
-		for (int i=0; i<num; i++) {
-			for (int j=i+1; j<num; j++) {
-				diffa = *(input + 7*list[i]+4) - *(input + 7*list[j]+4);
-				if (diffa<-0.5 || 0.5<diffa)	flag=0;
-			}
+		for (int i=0; i<2; i++) {
+			if ( (x-wsize < (int)*(input + 7*list[ dst[i] ]) && (int)*(input + 7*list[ dst[i] ]) < x+wsize &&
+				y-wsize < (int)*(input + 7*list[ dst[i] ]+1) && (int)*(input + 7*list[ dst[i] ]+1) < y+wsize )) std::cout<<"in"<<i;
+			if ((x-wsize < (int)*(input + 7*list[ dst[i] ]+2) && (int)*(input + 7*list[ dst[i] ]+2) < x+wsize &&
+				y-wsize < (int)*(input + 7*list[ dst[i] ]+3) && (int)*(input + 7*list[ dst[i] ]+3) < y+wsize ) )std::cout<<"in"<<i;
+			if ( (x-wsize < (int)*(input + 7*list[ dst[i] ]) && (int)*(input + 7*list[ dst[i] ]) < x+wsize &&
+				y-wsize < (int)*(input + 7*list[ dst[i] ]+1) && (int)*(input + 7*list[ dst[i] ]+1) < y+wsize ) ||
+				 (x-wsize < (int)*(input + 7*list[ dst[i] ]+2) && (int)*(input + 7*list[ dst[i] ]+2) < x+wsize &&
+				y-wsize < (int)*(input + 7*list[ dst[i] ]+3) && (int)*(input + 7*list[ dst[i] ]+3) < y+wsize ) )	flag=0;
 		}
-		if (flag)	count=0;
-	}
-/*	else if(count==3) {
-		double dism=1;
-		double disp=0;
-		double p;
-		for (int i=0; i<num; i++) {
-			for (int j=i+1; j<num; j++) {
-				diffa = *(input + 7*list[i]+4) - *(input + 7*list[j]+4);
-				if (-0.5<diffa && diffa<0.5) {
-					if(ang[i]>0)	disp = std::max(disp, dis[i]);
-					else			dism = std::max(dism, dis[i]);
-				}
-			}
-		}
-		p = disp/dism;
-	//	if (p<0.9 || 1.1 <p)	count=2;
-	}
+		std::cout<<"\n";
+		if (flag)	return 0;
 */
+	}
 
 //	std::cout<<num<<","<<count<<"/\n";
 	return count;
-	
 }
 
 std::vector<int> JunctionPointDetector::JPD(IplImage* img, int w) {
