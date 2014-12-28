@@ -164,28 +164,6 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 		diffa = *(input + 7*list[ dst[0] ]+4) - *(input + 7*list[ dst[1] ]+4);
 		if (diffa<-1.0 || 1.0<diffa)	flag=0;
 		if (flag)	return 0;
-
-/*		//All end point out of the window ==> straight line
-
-		for (int i=0; i<2; i++) {
-			std::cout<<"x,y,wsize:"<<x<<","<<y<<","<<wsize<<"\n";
-			std::cout<<"[x,y]"<<*(input + 7*list[ dst[i] ])<<","<<*(input + 7*list[ dst[i] ]+1)<<"\n";
-			std::cout<<"[x,y]"<<*(input + 7*list[ dst[i] ]+2)<<","<<*(input + 7*list[ dst[i] ]+3)<<"\n";
-		}
-		flag=1;
-		for (int i=0; i<2; i++) {
-			if ( (x-wsize < (int)*(input + 7*list[ dst[i] ]) && (int)*(input + 7*list[ dst[i] ]) < x+wsize &&
-				y-wsize < (int)*(input + 7*list[ dst[i] ]+1) && (int)*(input + 7*list[ dst[i] ]+1) < y+wsize )) std::cout<<"in"<<i;
-			if ((x-wsize < (int)*(input + 7*list[ dst[i] ]+2) && (int)*(input + 7*list[ dst[i] ]+2) < x+wsize &&
-				y-wsize < (int)*(input + 7*list[ dst[i] ]+3) && (int)*(input + 7*list[ dst[i] ]+3) < y+wsize ) )std::cout<<"in"<<i;
-			if ( (x-wsize < (int)*(input + 7*list[ dst[i] ]) && (int)*(input + 7*list[ dst[i] ]) < x+wsize &&
-				y-wsize < (int)*(input + 7*list[ dst[i] ]+1) && (int)*(input + 7*list[ dst[i] ]+1) < y+wsize ) ||
-				 (x-wsize < (int)*(input + 7*list[ dst[i] ]+2) && (int)*(input + 7*list[ dst[i] ]+2) < x+wsize &&
-				y-wsize < (int)*(input + 7*list[ dst[i] ]+3) && (int)*(input + 7*list[ dst[i] ]+3) < y+wsize ) )	flag=0;
-		}
-		std::cout<<"\n";
-		if (flag)	return 0;
-*/
 	}
 
 //	std::cout<<num<<","<<count<<"/\n";
