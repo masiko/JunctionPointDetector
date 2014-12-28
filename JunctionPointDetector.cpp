@@ -162,7 +162,7 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 		if(count==2) {
 		//-PI < normalaize_diffa < +PI ==> straight line
 		diffa = *(input + 7*list[ dst[0] ]+4) - *(input + 7*list[ dst[1] ]+4);
-		if (diffa<-0.5 || 0.5<diffa)	flag=0;
+		if (diffa<-1.0 || 1.0<diffa)	flag=0;
 		if (flag)	return 0;
 
 /*		//All end point out of the window ==> straight line
