@@ -70,7 +70,7 @@ int DownScale::downscale(IplImage* out, int position[], unsigned char color) {
 					if ( (unsigned char)img->imageData[x+y+l+k*img->width] > color) {
 						flag=1;
 						posx = x+l;
-						posy = y+k*img->width;
+						posy = i*scale+k;
 						break;
 					}
 				}
@@ -78,7 +78,7 @@ int DownScale::downscale(IplImage* out, int position[], unsigned char color) {
 			}
 
 			if (flag) {
-				out->imageData[j+i*col] = (unsigned char)img->imageData[posx+posy];
+				out->imageData[j+i*col] = (unsigned char)img->imageData[posx+posy*img->width];
 				position[2*(j+i*col)] = posx;
 				position[2*(j+i*col)+1] = posy;				
 			}else{
@@ -145,14 +145,14 @@ int DownScale::downscale(IplImage* out, int position[], IplImage* colormap, unsi
 					if ( *(p + x+y+l+k*colormap->width) == color) {
 						flag=1;
 						posx = x+l;
-						posy = y+k*img->width;
+						posy = i*scale+k;
 						break;
 					}
 				}
 				if (flag)	break;
 			}
 			if (flag) {
-				out->imageData[j+i*col] = (unsigned char)img->imageData[posx+posy];
+				out->imageData[j+i*col] = (unsigned char)img->imageData[posx+posy*img->width];
 				position[2*(j+i*col)] = posx;
 				position[2*(j+i*col)] = posy;				
 			}else{

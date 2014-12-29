@@ -9,7 +9,7 @@ int main() {
 	int n;
 	int position[307200];
 	std::vector<int> v;
-	IplImage* img = cvLoadImage("image00002.png");
+	IplImage* img = cvLoadImage("image00012.png");
 	IplImage* img2 = cvCreateImage(cvSize(img->width/scale, img->height/scale), 8, 1);
 	IplImage* img3 = cvCreateImage(cvSize(img->width/scale, img->height/scale), 8, 1);
 	JunctionPointDetector jpd;
@@ -25,6 +25,7 @@ int main() {
 	v = jpd.JPD(img2, 5);
 
 	for (int i=0; i<v.size()/3; i++) {
+		if ( position[2*(v[3*i]+img2->width*v[3*i+1])]<0 || position[2*(v[3*i]+img2->width*v[3*i+1])+1]<0)	continue;
 		printf("%d,%d,%d\n", v[3*i], v[3*i+1], v[3*i+2]);
 		printf("%d,%d,%d\n", position[2*(v[3*i]+img2->width*v[3*i+1])], position[2*(v[3*i]+img2->width*v[3*i+1])+1], v[3*i+2]);
 	}
