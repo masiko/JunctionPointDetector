@@ -45,6 +45,7 @@ int JunctionPointDetector::setImage(double* in, int X, int Y, int num, int w) {
 	
 	if(X*Y > 307200)	return 1;
 	input = in;
+	n = num;
 	width = X;
 	height = Y;
 	wsize = w;
@@ -95,10 +96,10 @@ int JunctionPointDetector::process(int x, int y) {
 	double diff;
 	
 //	std::cout<<x<<","<<y<<"/";
-	sx = x-wsize;
-	sy = y-wsize;
-	ex = x+wsize;
-	ey = y+wsize;
+	sx = x-wsize;// - (int)(y*0.1);
+	sy = y-wsize/2;// - (int)(y*0.1);
+	ex = x+wsize;// + (int)(y*0.1);
+	ey = y+wsize/2;// + (int)(y*0.1);
 
 //	if (sx<0 || width-1<ex || sy<0 || height-1<ey)	return -1;
 	sx = std::max(0, std::min(width-1, sx));
@@ -159,36 +160,25 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 		}
 	}
 
-		if(count==2) {
-		//-PI < normalaize_diffa < +PI ==> straight line
+	flag = 1;
+	if (count==2) {
+	//-PI < normalaize_diffa < +PI ==> straight line
 		diffa = *(input + 7*list[ dst[0] ]+4) - *(input + 7*list[ dst[1] ]+4);
 		if (diffa<-1.0 || 1.0<diffa)	flag=0;
 		if (flag)	return 0;
-
-/*		//All end point out of the window ==> straight line
-
-		for (int i=0; i<2; i++) {
-			std::cout<<"x,y,wsize:"<<x<<","<<y<<","<<wsize<<"\n";
-			std::cout<<"[x,y]"<<*(input + 7*list[ dst[i] ])<<","<<*(input + 7*list[ dst[i] ]+1)<<"\n";
-			std::cout<<"[x,y]"<<*(input + 7*list[ dst[i] ]+2)<<","<<*(input + 7*list[ dst[i] ]+3)<<"\n";
-		}
-		flag=1;
-		for (int i=0; i<2; i++) {
-			if ( (x-wsize < (int)*(input + 7*list[ dst[i] ]) && (int)*(input + 7*list[ dst[i] ]) < x+wsize &&
-				y-wsize < (int)*(input + 7*list[ dst[i] ]+1) && (int)*(input + 7*list[ dst[i] ]+1) < y+wsize )) std::cout<<"in"<<i;
-			if ((x-wsize < (int)*(input + 7*list[ dst[i] ]+2) && (int)*(input + 7*list[ dst[i] ]+2) < x+wsize &&
-				y-wsize < (int)*(input + 7*list[ dst[i] ]+3) && (int)*(input + 7*list[ dst[i] ]+3) < y+wsize ) )std::cout<<"in"<<i;
-			if ( (x-wsize < (int)*(input + 7*list[ dst[i] ]) && (int)*(input + 7*list[ dst[i] ]) < x+wsize &&
-				y-wsize < (int)*(input + 7*list[ dst[i] ]+1) && (int)*(input + 7*list[ dst[i] ]+1) < y+wsize ) ||
-				 (x-wsize < (int)*(input + 7*list[ dst[i] ]+2) && (int)*(input + 7*list[ dst[i] ]+2) < x+wsize &&
-				y-wsize < (int)*(input + 7*list[ dst[i] ]+3) && (int)*(input + 7*list[ dst[i] ]+3) < y+wsize ) )	flag=0;
-		}
-		std::cout<<"\n";
-		if (flag)	return 0;
-*/
 	}
-
-//	std::cout<<num<<","<<count<<"/\n";
+/*
+	else if (count==3) {
+		int para=0;
+		for (int i=0; i<3; i++) {
+			for (int j=0; j<3; j++) {
+				diffa = *(input + 7*list[ dst[i] ]+4) - *(input + 7*list[ dst[j] ]+4);
+				if (diffa<-0.5 || 0.5<diffa)		para++;
+			}
+		}
+		if (para<4)	return 0;
+	}
+*/
 	return count;
 }
 
@@ -199,10 +189,10 @@ int JunctionPointDetector::mergeJunction(){
 
 	for (int i=0; i<num; i++) {
 		pos0 = 3*i;
-		x0 = dst[pos0] - wsize*2;
-		y0 = dst[pos0+1] - wsize*2;
-		x1 = dst[pos0] + wsize*2;
-		y1 = dst[pos0+1] + wsize*2;
+		x0 = dst[pos0] - wsize;
+		y0 = dst[pos0+1] - wsize;
+		x1 = dst[pos0] + wsize;
+		y1 = dst[pos0+1] + wsize;
 
 		for (int j=i+1; j<num; j++) {
 			pos1 = 3*j;
@@ -221,7 +211,7 @@ std::vector<int> JunctionPointDetector::JPD(IplImage* img, int w) {
 	dst.clear();
 	
 	if (Ipl2Double(img, map))	return getDst();
-	ls = lsd(&num, map, img->width, img->height);
+	ls = lsd_scale(&num, map, img->width, img->height, 2.0);
 	
 	for (int i=0; i<307200; i++) {
 		map[i] = -1.0;

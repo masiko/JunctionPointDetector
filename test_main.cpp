@@ -8,9 +8,11 @@ int main() {
 	const int scale = 4;
 	int n;
 	std::vector<int> v;
-	IplImage* img = cvLoadImage("image00005.png");
+	IplImage* img = cvLoadImage("image00021.png");
 	IplImage* img2 = cvCreateImage(cvSize(img->width/scale, img->height/scale), 8, 1);
-	IplImage* img3 = cvCreateImage(cvSize(img->width/scale, img->height/scale), 8, 1);
+//	IplImage* img3 = cvCreateImage(cvSize(img->width/scale, img->height/scale), 8, 1);
+	cv::Mat result;
+	result.create(img->height/scale, img->width/2, CV_8UC3);
 	JunctionPointDetector jpd;
 	DownScale ds;
 
@@ -25,10 +27,17 @@ int main() {
 
 	for (int i=0; i<v.size()/3; i++)	printf("%d,%d,%d\n", v[3*i]*scale, v[3*i+1]*scale, v[3*i+2]);
 
-	for (int i=0; i<v.size()/3; i++)	img3->imageData[v[3*i]+img3->width*v[3*i+1]] = 255;
-
-	cvNamedWindow("dst2");
-	cvShowImage("dst2", img3);
+	int num;
+	double* out;
+	out = jpd.getLineSegment(&num);
+	for (int i=0; i<num; i++) {
+		cv::line(result, cv::Point( (int)*(out +7*i+0) , (int)*(out +7*i+1) ),cv::Point((int)*(out +7*i+2),(int)*(out +7*i+3)),cv::Scalar( 0, 0, 255 ),1,0);
+//		img3->imageData[v[3*i]+img3->width*v[3*i+1]] = 255;
+	}
+	cv::namedWindow("result");
+	cv::imshow("result", result);
+//	cvNamedWindow("dst2");
+//	cvShowImage("dst2", img3);
 	cv::waitKey();
 	return 0;
 }
