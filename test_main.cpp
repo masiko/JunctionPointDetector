@@ -25,7 +25,8 @@ int main() {
 
 	v = jpd.JPD(img2, 5);
 
-	for (int i=0; i<v.size()/3; i++)	printf("%d,%d,%d\n", v[3*i]*scale, v[3*i+1]*scale, v[3*i+2]);
+	printf("num: %d, ",(int)(v.size()/3));
+	for (int i=0; i<v.size()/3; i++)	if (v[3*i+2]>0)	printf("%d: %d,%d,%d\n", i, v[3*i]*scale, v[3*i+1]*scale, v[3*i+2]);
 
 	int num;
 	double* out;

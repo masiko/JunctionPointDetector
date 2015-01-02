@@ -132,7 +132,7 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 	double diffa, diff1, diff2;
 	double ang[20];
 	double dis[20];
-	int dst[20];
+	int nolist[20];
 	int count=0;
 	int flag=1;
 
@@ -156,14 +156,14 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 			if (-0.5<diffa && diffa<0.5)	flag=0;
 		}
 		if (flag) {
-			dst[count++] = i;
+			nolist[count++] = i;
 		}
 	}
 
 	flag = 1;
 	if (count==2) {
 	//-PI < normalaize_diffa < +PI ==> straight line
-		diffa = *(input + 7*list[ dst[0] ]+4) - *(input + 7*list[ dst[1] ]+4);
+		diffa = *(input + 7*list[ nolist[0] ]+4) - *(input + 7*list[ nolist[1] ]+4);
 		if (diffa<-1.0 || 1.0<diffa)	flag=0;
 		if (flag)	return 0;
 	}
@@ -172,7 +172,7 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 		int para=0;
 		for (int i=0; i<3; i++) {
 			for (int j=0; j<3; j++) {
-				diffa = *(input + 7*list[ dst[i] ]+4) - *(input + 7*list[ dst[j] ]+4);
+				diffa = *(input + 7*list[ nolist[i] ]+4) - *(input + 7*list[ nolist[j] ]+4);
 				if (diffa<-0.5 || 0.5<diffa)		para++;
 			}
 		}
@@ -182,6 +182,46 @@ int JunctionPointDetector::detectJunction(int x, int y, int num, int list[20]) {
 	return count;
 }
 
+int JunctionPointDetector::mergeJunction(){
+	std::vector<int> merge;
+	int num = dst.size()/3;
+	int pos0, pos1;
+	int x0,y0,x1,y1;
+	int x, y, type, c;
+
+	for (int i=0; i<num; i++) {
+		pos0 = 3*i;
+		x = dst[pos0];
+		y = dst[pos0+1];
+		type = dst[pos0+2];
+		if(type<0)	continue;
+		c = 0;
+		x0 = dst[pos0] - wsize;
+		y0 = dst[pos0+1] - wsize/2;
+		x1 = dst[pos0] + wsize;
+		y1 = dst[pos0+1] + wsize/2;
+		for (int j=i+1; j<num; j++) {
+			pos1 = 3*j;
+			if (x0 < dst[pos1] && dst[pos1] < x1 && y0 < dst[pos1+1] && dst[pos1+1] < y1 && dst[pos1+2] > 0) {
+				x += dst[pos1];
+				y += dst[pos1+1];
+				type = std::max(type, dst[pos1+2]);
+				dst[pos1+2] = -1;
+				c++;
+			}
+		}
+//		if (!c)	continue;
+		std::cout<<"x"<<x<<",c"<<c<<"\n";
+		x /= (c+1);
+		y /= (c+1);
+		merge.push_back(x);
+		merge.push_back(y);
+		merge.push_back(type);
+	}
+	dst.swap(merge);
+	return 0;
+}
+/*
 int JunctionPointDetector::mergeJunction(){
 	int num = dst.size()/3;
 	int pos0, pos1;
@@ -204,7 +244,7 @@ int JunctionPointDetector::mergeJunction(){
 	}
 	return 0;
 }
-
+*/
 std::vector<int> JunctionPointDetector::JPD(IplImage* img, int w) {
 	int x,y,type,num;
 	double *ls;
