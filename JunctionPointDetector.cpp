@@ -96,10 +96,10 @@ int JunctionPointDetector::process(int x, int y) {
 	double diff;
 	
 //	std::cout<<x<<","<<y<<"/";
-	sx = x-wsize;// - (int)(y*0.1);
-	sy = y-wsize/2;// - (int)(y*0.1);
-	ex = x+wsize;// + (int)(y*0.1);
-	ey = y+wsize/2;// + (int)(y*0.1);
+	sx = x-wsize/2;// - (int)(y*0.1);
+	sy = y-wsize;// - (int)(y*0.1);
+	ex = x+wsize/2;// + (int)(y*0.1);
+	ey = y+wsize;// + (int)(y*0.1);
 
 //	if (sx<0 || width-1<ex || sy<0 || height-1<ey)	return -1;
 	sx = std::max(0, std::min(width-1, sx));
@@ -197,9 +197,9 @@ int JunctionPointDetector::mergeJunction(){
 		if(type<0)	continue;
 		c = 0;
 		x0 = dst[pos0] - wsize;
-		y0 = dst[pos0+1] - wsize/2;
+		y0 = dst[pos0+1] - wsize;
 		x1 = dst[pos0] + wsize;
-		y1 = dst[pos0+1] + wsize/2;
+		y1 = dst[pos0+1] + wsize;
 		for (int j=i+1; j<num; j++) {
 			pos1 = 3*j;
 			if (x0 < dst[pos1] && dst[pos1] < x1 && y0 < dst[pos1+1] && dst[pos1+1] < y1 && dst[pos1+2] > 0) {
