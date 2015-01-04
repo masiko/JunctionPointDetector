@@ -96,9 +96,9 @@ int JunctionPointDetector::process(int x, int y) {
 	double diff;
 	
 //	std::cout<<x<<","<<y<<"/";
-	sx = x-wsize/2;// - (int)(y*0.1);
+	sx = x-wsize;// - (int)(y*0.1);
 	sy = y-wsize;// - (int)(y*0.1);
-	ex = x+wsize/2;// + (int)(y*0.1);
+	ex = x+wsize;// + (int)(y*0.1);
 	ey = y+wsize;// + (int)(y*0.1);
 
 //	if (sx<0 || width-1<ex || sy<0 || height-1<ey)	return -1;
@@ -251,7 +251,7 @@ std::vector<int> JunctionPointDetector::JPD(IplImage* img, int w) {
 	dst.clear();
 	
 	if (Ipl2Double(img, map))	return getDst();
-	ls = lsd_scale(&num, map, img->width, img->height, 2.0);
+	ls = lsd_scale(&num, map, img->width, img->height, 0.8);
 	
 	for (int i=0; i<307200; i++) {
 		map[i] = -1.0;

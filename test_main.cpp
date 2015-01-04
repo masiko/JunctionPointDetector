@@ -5,14 +5,14 @@
 #include "DownScale.h"
 
 int main() {
-	const int scale = 8;
+	const int scale = 4;
 	int n;
 	std::vector<int> v;
-	IplImage* img = cvLoadImage("image00020.png");
+	IplImage* img = cvLoadImage("image00014.png");
 	IplImage* img2 = cvCreateImage(cvSize(img->width/scale, img->height/scale), 8, 1);
 //	IplImage* img3 = cvCreateImage(cvSize(img->width/scale, img->height/scale), 8, 1);
 	cv::Mat result;
-	result.create(img->height/scale, img->width/2, CV_8UC3);
+	result.create(img->height/scale, img->width/scale, CV_8UC3);
 	JunctionPointDetector jpd;
 	DownScale ds;
 
